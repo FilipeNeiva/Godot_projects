@@ -1,0 +1,169 @@
+[gd_scene load_steps=24 format=2]
+
+[ext_resource path="res://scripts/Game.gd" type="Script" id=1]
+[ext_resource path="res://assets/fundo.png" type="Texture" id=2]
+[ext_resource path="res://scripts/Felpudo.gd" type="Script" id=3]
+[ext_resource path="res://assets/felpudo/felpudoVoa1.png" type="Texture" id=4]
+[ext_resource path="res://assets/felpudo/felpudoVoa2.png" type="Texture" id=5]
+[ext_resource path="res://assets/felpudo/felpudoVoa3.png" type="Texture" id=6]
+[ext_resource path="res://assets/felpudo/felpudoVoa4.png" type="Texture" id=7]
+[ext_resource path="res://assets/felpudo/felpudoVoa5.png" type="Texture" id=8]
+[ext_resource path="res://assets/felpudo/felpudoVoa6.png" type="Texture" id=9]
+[ext_resource path="res://sound/somVoa.ogg" type="AudioStream" id=10]
+[ext_resource path="res://scenes/Cano.tscn" type="PackedScene" id=11]
+[ext_resource path="res://scripts/Gerador.gd" type="Script" id=12]
+[ext_resource path="res://assets/font.ttf" type="DynamicFontData" id=13]
+[ext_resource path="res://sound/somScore.ogg" type="AudioStream" id=14]
+[ext_resource path="res://sound/somHit.ogg" type="AudioStream" id=15]
+
+[sub_resource type="Animation" id=1]
+resource_name = "BackAnim"
+length = 3.0
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("BackAnim/Sprite1:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 3 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ), Vector2( -1025.48, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("BackAnim/Sprite2:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 3 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 1025.48, -0.222549 ), Vector2( 0, -0.223 ) ]
+}
+
+[sub_resource type="PhysicsMaterial" id=2]
+
+[sub_resource type="SpriteFrames" id=3]
+animations = [ {
+"frames": [ ExtResource( 4 ), ExtResource( 5 ), ExtResource( 6 ), ExtResource( 7 ), ExtResource( 8 ), ExtResource( 9 ) ],
+"loop": true,
+"name": "default",
+"speed": 7.0
+} ]
+
+[sub_resource type="ShaderMaterial" id=4]
+
+[sub_resource type="CircleShape2D" id=5]
+radius = 7.93939
+
+[sub_resource type="SegmentShape2D" id=6]
+b = Vector2( 1001.57, 0.649658 )
+
+[sub_resource type="SegmentShape2D" id=7]
+b = Vector2( 1002.45, -5.02454 )
+
+[sub_resource type="DynamicFont" id=8]
+size = 160
+font_data = ExtResource( 13 )
+
+[node name="GameNode" type="Node2D"]
+script = ExtResource( 1 )
+
+[node name="BackAnim" type="AnimationPlayer" parent="."]
+editor/display_folded = true
+autoplay = "BackAnim"
+anims/BackAnim = SubResource( 1 )
+
+[node name="Sprite1" type="Sprite" parent="BackAnim"]
+scale = Vector2( 3.8, 3.6 )
+texture = ExtResource( 2 )
+centered = false
+
+[node name="Sprite2" type="Sprite" parent="BackAnim"]
+position = Vector2( 1025.48, 4.20348 )
+scale = Vector2( 3.8, 3.6 )
+texture = ExtResource( 2 )
+centered = false
+
+[node name="Felpudo" type="RigidBody2D" parent="."]
+editor/display_folded = true
+position = Vector2( 211.3, 838.734 )
+z_index = 1
+mode = 2
+physics_material_override = SubResource( 2 )
+gravity_scale = 18.0
+script = ExtResource( 3 )
+
+[node name="FelpudoAnim" type="AnimatedSprite" parent="Felpudo"]
+scale = Vector2( 1.4, 1.4 )
+frames = SubResource( 3 )
+frame = 1
+playing = true
+
+[node name="FormaFelpudo" type="CollisionShape2D" parent="Felpudo"]
+material = SubResource( 4 )
+scale = Vector2( 12, 12 )
+shape = SubResource( 5 )
+
+[node name="SomVoa" type="AudioStreamPlayer" parent="Felpudo"]
+stream = ExtResource( 10 )
+
+[node name="Limites" type="StaticBody2D" parent="."]
+editor/display_folded = true
+
+[node name="Topo" type="CollisionShape2D" parent="Limites"]
+shape = SubResource( 6 )
+
+[node name="Piso" type="CollisionShape2D" parent="Limites"]
+position = Vector2( -0.109455, 1699.92 )
+shape = SubResource( 7 )
+
+[node name="Canos" type="Node2D" parent="."]
+editor/display_folded = true
+z_index = 2
+
+[node name="Cano" parent="Canos" instance=ExtResource( 11 )]
+position = Vector2( 1240.9, 773.897 )
+z_index = 2
+z_as_relative = false
+
+[node name="Gerador" type="Position2D" parent="Canos"]
+position = Vector2( 1240.9, 773.897 )
+script = ExtResource( 12 )
+
+[node name="Timer" type="Timer" parent="Canos/Gerador"]
+process_mode = 0
+wait_time = 3.0
+autostart = true
+
+[node name="TimerToReplay" type="Timer" parent="."]
+wait_time = 2.0
+
+[node name="Node2D" type="Node2D" parent="."]
+editor/display_folded = true
+z_index = 3
+
+[node name="Control" type="Control" parent="Node2D"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="Label" type="Label" parent="Node2D/Control"]
+margin_left = 4.0
+margin_top = 90.0
+margin_right = 992.0
+margin_bottom = 283.0
+custom_fonts/font = SubResource( 8 )
+text = "0"
+align = 1
+
+[node name="SomScore" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 14 )
+
+[node name="SomHit" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 15 )
+[connection signal="timeout" from="Canos/Gerador/Timer" to="Canos/Gerador" method="_on_Timer_timeout"]
+[connection signal="timeout" from="TimerToReplay" to="." method="_on_TimerToReplay_timeout"]
